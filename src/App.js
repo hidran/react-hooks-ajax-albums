@@ -13,18 +13,23 @@ function App() {
   const [photos, setPhotos] = useState([]);
   const [albums, setAlbums] = useState([]);
   const [users, setUsers] = useState([]);
-  
+   const [userSelected, setSelectedUser] = useState(0);
+
+ const [albumSelected, setSelectedAlbum] = useState(0);
   useEffect(() => {
     const getPhotos = async () => {
       const photos = await fetch(photosUrl).then(res => res.json());
       setPhotos(photos.slice(0, 20));
     };
-    getPhotos();
+    if (userSelected || albumSelected) {
+      getPhotos(); 
+    }
+   
 
     return () => {
       
     }
-  }, []);
+  }, [userSelected, albumSelected]);
   
   useEffect(() => {
     const getAlbums = async () => {
@@ -48,6 +53,13 @@ function App() {
       
     }
   }, []);
+
+  const manageChangeUser = ({ target }) => {
+    setSelectedUser(target.value);
+  }
+   const manageChangeAlbum = ({ target }) => {
+    setSelectedAlbum(target.value);
+  }
   return (
     <div className="App">
       <header className="App-header">
@@ -55,7 +67,7 @@ function App() {
          <form className="gallery">
           <div className="form-group">
         <label htmlFor="users"> USERS
-             <select name ="users" id="users">
+             <select name ="users" id="users" onChange={manageChangeUser}>
              <option value="">SELECT</option>
                {
                   users.map(a => <option key={a.id} value={a.id}>{ a.name}</option>)
@@ -67,7 +79,7 @@ function App() {
           </div>
          <div className="form-group">
           <label htmlFor="albums"> ALBUMS
-             <select name ="albums" id="albums">
+             <select name ="albums" id="albums"  onChange={manageChangeAlbum}>
              <option value="">SELECT</option>
                {
                   albums.map(a => <option key={a.id} value={a.id}>{ a.title}</option>)
