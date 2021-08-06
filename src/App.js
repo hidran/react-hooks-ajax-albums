@@ -18,10 +18,12 @@ function App() {
  const [albumSelected, setSelectedAlbum] = useState(0);
   useEffect(() => {
     const getPhotos = async () => {
-      const photos = await fetch(photosUrl).then(res => res.json());
-      setPhotos(photos.slice(0, 20));
+
+     const url = albumSelected ? photosUrl +'?albumId=' + albumSelected: photosUrl;
+      const photos = await fetch(url).then(res => res.json());
+      setPhotos(photos);
     };
-    if (userSelected || albumSelected) {
+    if (albumSelected) {
       getPhotos(); 
     }
    
@@ -29,19 +31,21 @@ function App() {
     return () => {
       
     }
-  }, [userSelected, albumSelected]);
+  }, [ albumSelected]);
   
   useEffect(() => {
     const getAlbums = async () => {
-      const albums = await fetch(albumsUrl).then(res => res.json());
-      setAlbums(albums.slice(0, 20));
+       const url = userSelected ? albumsUrl +'?userId=' + userSelected: albumsUrl;
+      const albums = await fetch(url).then(res => res.json());
+      setAlbums(albums);
     };
     getAlbums();
 
     return () => {
       
     }
-  }, []);
+  }, [userSelected]);
+
   useEffect(() => {
     const getUsers = async () => {
       const users = await fetch(usersUrl).then(res => res.json());
@@ -54,12 +58,23 @@ function App() {
     }
   }, []);
 
-  const manageChangeUser = ({ target }) => {
-    setSelectedUser(target.value);
+   const manageChangeUser = ({target}) =>{
+     setSelectedUser(+target.value);
+     setPhotos([]);
   }
-   const manageChangeAlbum = ({ target }) => {
-    setSelectedAlbum(target.value);
-  }
+  const manageChangeAlbum = ({target}) =>{
+    setSelectedAlbum(+target.value);
+}
+ const Opt =  ({id, name, userId, title}) =>{
+   const selectedOpt =  id === (userId ? albumSelected : userSelected )? 'selected' : null;
+   const optName = userId ? title : name;
+    return (
+      <option selected={selectedOpt} value={id} key={id + optName}>
+                  {optName}
+      </option>
+    );
+
+ }
   return (
     <div className="App">
       <header className="App-header">
@@ -67,11 +82,10 @@ function App() {
          <form className="gallery">
           <div className="form-group">
         <label htmlFor="users"> USERS
-             <select name ="users" id="users" onChange={manageChangeUser}>
+             <select name ="users" id="users" value={userSelected} onChange={manageChangeUser}>
              <option value="">SELECT</option>
                {
-                  users.map(a => <option key={a.id} value={a.id}>{ a.name}</option>)
-                 
+                users.map(a => <Opt {...a} />)
                }
              </select>
 
@@ -79,10 +93,10 @@ function App() {
           </div>
          <div className="form-group">
           <label htmlFor="albums"> ALBUMS
-             <select name ="albums" id="albums"  onChange={manageChangeAlbum}>
+             <select name ="albums" id="albums" value={albumSelected}  onChange={manageChangeAlbum}>
              <option value="">SELECT</option>
                {
-                  albums.map(a => <option key={a.id} value={a.id}>{ a.title}</option>)
+                 albums.map(a =>  <Opt {...a} />)
                  
                }
              </select>
@@ -94,7 +108,7 @@ function App() {
         <ul className="photos">
           {
             photos.map(photo =>
-              <li key={photo.id}>
+              <li id= {photo.id} key={photo.id}>
               <img src={photo.thumbnailUrl} title={photo.title} alt={photo.title}/></li>
               )
           }
