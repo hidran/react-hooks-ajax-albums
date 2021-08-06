@@ -18,8 +18,14 @@
   color: #61dafb;
 }
 
-ul.photos {
+.photos {
   display: flex;
-  list-style-type: none;
   flex-wrap: wrap;
+  list-style-type: none;
+}
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start
 }
