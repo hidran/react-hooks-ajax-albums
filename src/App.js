@@ -1,22 +1,20 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [photos, setPhotos] = useState([]);
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>ALBUMS</h1>
+        <ul>
+          {
+            photos.map(photo =>
+              <li key={photo.id}>
+              <img src={photo.thumbnailUrl} title={photo.title} alt={photo.title}/></li>
+              )
+          }
+        </ul>
       </header>
     </div>
   );
